@@ -3,6 +3,10 @@
 %p= @post.link
 %p= @post.description
 %p= @post.user.name
+%p= pluralize(@post.get_upvotes.size, "Like")
+%p= pluralize(@post.get_downvotes.size, "Dislike")
+= link_to "Like", like_post_path(@post), method: :put
+= link_to "Dislike", dislike_post_path(@post), method: :put
 
 #comment
   %h2.comment_count= pluralize(@post.comments.size, "Comment")
