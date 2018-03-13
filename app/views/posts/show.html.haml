@@ -1,7 +1,8 @@
+= image_tag @post.image.url(:medium)
 %h1= @post.title
 %p= @post.link
 %p= @post.description
-%p= @post.user.name 
+%p= @post.user.name
 
 = link_to "Home", root_path
 - if current_user && current_user == @post.user
