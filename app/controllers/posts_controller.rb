@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
-  before_action :find_post, only: [:show, :edit, :update, :destroy]
+  before_action :find_post_and_check_permission, only: [:edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:index, :show]
   def index
     @posts = Post.all.order("created_at DESC")
   end
@@ -10,6 +11,7 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
+    @post.user = current_user
     if @post.save
       redirect_to @post
     else
@@ -18,6 +20,7 @@ class PostsController < ApplicationController
   end
 
   def show
+    @post = Post.find(params[:id])
   end
 
   def edit
@@ -33,7 +36,7 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy
-    redirect_to posts_path 
+    redirect_to posts_path
   end
 
   private
@@ -41,7 +44,10 @@ class PostsController < ApplicationController
     params.require(:post).permit(:title, :link, :description)
   end
 
-  def find_post
+  def find_post_and_check_permission
     @post = Post.find(params[:id])
+    if current_user && current_user != @post.user
+      redirect_to root_path, alert: "You have no permission."
+    end
   end
 end
